@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option csharp_namespace = "InventoryService.Services.System";
+
+import "Resources/ResourceIdentifier.proto";
+
+package InventoryService.Services.System;
+
+service SBookLend{
+    rpc ReserveBook (Commons.Messages.Resources.ResourceIdentifier) returns (Commons.Messages.Resources.ResourceIdentifier);
+}

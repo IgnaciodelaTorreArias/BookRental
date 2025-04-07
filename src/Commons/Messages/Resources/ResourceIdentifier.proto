@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option csharp_namespace = "Commons.Messages.Resources";
+
+package Commons.Messages.Resources;
+
+message ResourceIdentifier{
+	uint32 identifier = 1;
+}

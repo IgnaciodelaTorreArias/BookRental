@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+option csharp_namespace = "RentalService.Services.User";
+
+import "Resources/PaginatedResource.proto";
+import "Resources/ResourceIdentifier.proto";
+
+package RentalService.Services.User;
+
+// The greeting service definition.
+// [Authorize (Roles = "user")]
+service SRental {
+  // /books/{book_id}
+  // uses book_id
+  rpc PostBookRental (Commons.Messages.Resources.ResourceIdentifier) returns (RentalResult);
+  // /rentals/waiting
+  rpc GetWaitingRentals(Commons.Messages.Resources.PaginatedResource) returns (WaitingRentals);
+  // /rentals/notified
+  rpc GetNotifiedRentals(Commons.Messages.Resources.PaginatedResource) returns (NotifiedRentals);
+  // /rentals/confirmed
+  rpc GetConfirmedRentals(Commons.Messages.Resources.PaginatedResource) returns (ConfirmedRentals);
+  // /rentals/history
+  rpc GetPastRentals(Commons.Messages.Resources.PaginatedResource) returns (RentalRegistries);
+  // /rentals
+  // uses copy_id
+  rpc PostConfirmRental(Commons.Messages.Resources.ResourceIdentifier) returns (ConfirmationResult);
+}
+
+enum RentalStatus {
+    UNSPECIFIED_RentalStatus = 0;
+    JOINED_WAITING_LIST = 1;
+    RESERVED_BOOK = 2;
+    UNAVAILABLE_BOOK = 3;
+}
+message RentalResult {
+    RentalStatus status = 1;
+}
+
+message WaitingRental {
+    uint32 book_id = 1;
+    uint64 joined_at = 2;
+}
+
+message WaitingRentals {
+    repeated WaitingRental rentals = 1;
+}
+
+message NotifiedRental {
+    uint32 book_id = 1;
+    uint32 copy_id = 2;
+    uint32 rental_fee = 3;
+    uint64 notified_at = 4;
+}
+
+message NotifiedRentals {
+    repeated NotifiedRental rentals = 1;
+}
+
+message ConfirmedRental {
+    uint32 book_id = 1;
+    uint32 copy_id = 2;
+    uint32 rental_fee = 3;
+    uint64 confirmed_at = 4;
+}
+
+message ConfirmedRentals {
+    repeated ConfirmedRental rentals = 1;
+}
+
+message RentalRegistry {
+    uint64 rental_id = 1;
+    uint32 book_id = 2;
+    uint32 copy_id = 3;
+    uint32 start_date = 4;
+    optional uint32 return_date = 5;
+    uint32 rental_fee = 6;
+    optional uint32 total = 7;
+}
+
+message RentalRegistries {
+    repeated RentalRegistry rentals = 1;
+}
+
+enum ConfirmedRentalStatus {
+    UNSPECIFIED_ConfirmedRentalStatus = 0;
+    LATE = 1;
+    CONFIRMED = 2;
+}
+
+message ConfirmationResult {
+    ConfirmedRentalStatus status = 1;
+}

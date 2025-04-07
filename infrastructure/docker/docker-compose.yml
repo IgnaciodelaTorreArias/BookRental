@@ -1,0 +1,38 @@
+services:
+  RentalDB:
+    image: postgres
+    container_name: RentalDB
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD = ${POSTGRES_PASSWORD}
+    networks:
+      - BookRental
+
+  InventoryDB:
+    image: postgres
+    container_name: InventoryDB
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_PASSWORD = ${POSTGRES_PASSWORD}
+    networks:
+      - BookRental
+
+  LGTM:
+    image: grafana/otel-lgtm:latest
+    container_name: LGTM
+    ports:
+      3000:3000
+      4317:4317
+      4318:4318
+    networks:
+      - BookRental
+
+networks:
+  BookRental:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.15.0/24
+          gateway: 10.0.15.1

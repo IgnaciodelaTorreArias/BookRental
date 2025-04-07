@@ -1,0 +1,32 @@
+[
+    {
+        "book_name": "Journey to the Center of the Earth",
+        "iso_language_code": "eng",
+        "author_name": "Julio Verne",
+        "description": "An adventurous geology professor chances upon a manuscript in which a 16th-century explorer claims to have found a route to the earth's core. Professor Lidenbrock can't resist the opportunity to investigate, and with his nephew Axel, he sets off across Iceland in the company of Hans Bjelke, a native guide.\nThe expedition descends into an extinct volcano toward a sunless sea, where they encounter a subterranean world of luminous rocks, antediluvian forests, and fantastic marine life — a living past that holds the secrets to the origins of human existence.",
+        "published_date": 680775,
+        "published_date_unknown": false,
+        "rental_fee": 100,
+        "visible": true
+    },
+    {
+        "book_name": "Around the World in Eighty Days",
+        "iso_language_code": "eng",
+        "author_name": "Julio Verne",
+        "description": "One night in the reform club, Phileas Fogg bets his companions that he can travel across the globe in just eighty days. Breaking the well-established routine of his daily life, he immediately sets off for Dover with his astonished valet Passepartout. Passing through exotic lands and dangerous locations, they seize whatever transportation is at hand—whether train or elephant—overcoming set-backs and always racing against the clock.",
+        "published_date": 683368,
+        "published_date_unknown": false,
+        "rental_fee": 100,
+        "visible": true
+    },
+    {
+        "book_name": "Dracula",
+        "iso_language_code": "eng",
+        "author_name": "Bram Stoker",
+        "description": "When Jonathan Harker visits Transylvania to help Count Dracula with the purchase of a London house, he makes a series of horrific discoveries about his client. Soon afterwards, various bizarre incidents unfold in England: an apparently unmanned ship is wrecked off the coast of Whitby; a young woman discovers strange puncture marks on her neck; and the inmate of a lunatic asylum raves about the 'Master' and his imminent arrival.\nIn Dracula, Bram Stoker created one of the great masterpieces of the horror genre, brilliantly evoking a nightmare world of vampires and vampire hunters and also illuminating the dark corners of Victorian sexuality and desire.",
+        "published_date": 692645,
+        "published_date_unknown": false,
+        "rental_fee": 100,
+        "visible": true
+    }
+]

@@ -1,0 +1,1 @@
+{"typ":"at+jwt","alg":"RS256"}.{"iss":"http://localhost/BookRental","aud":"http://localhost/BookRental","exp":1745775026,"iat":1742089006,"jti":"0","sub":"1","client_id":"BookRentalAPI"}

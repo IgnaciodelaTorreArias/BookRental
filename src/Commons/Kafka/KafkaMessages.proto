@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option csharp_namespace = "Commons.Kafka";
+
+package Commons.Kafka;
+
+enum BookOperation{
+	UNSPECIFIED_BookOperation = 0;
+	CREATED = 1;
+	UPDATED = 2;
+}
+// Topics:
+// 1. book_management
+// 2. book_available
+// 3. book_returned
+message KafkaBook {
+	uint32 identifier = 1;
+	optional string description = 2;
+	optional uint32 rental_fee = 3;
+	optional bool visible = 4;
+	optional BookOperation operation = 5;
+}
+
+
+// Topics:
+// 1. pending_confirmation
+// 2. confirmed_rental
+message KafkaRental {
+	optional uint32 book_id = 1;
+	uint32 copy_id = 2;
+	uint32 user_id = 3;
+}

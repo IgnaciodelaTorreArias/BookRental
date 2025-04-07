@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "InventoryService.Services.Users";
+
+import "Resources/PaginatedResource.proto";
+import "Resources/ResourceIdentifier.proto";
+
+package InventoryService.Services.Users;
+
+service SInventory {
+    // /books
+    rpc GetRecentBooks (Commons.Messages.Resources.PaginatedResource) returns (Books);
+    // /books/{book_id}
+    rpc GetBook (Commons.Messages.Resources.ResourceIdentifier) returns (Book);
+}
+
+message Book {
+    // Ignored in write operations
+    optional uint32 book_id = 1;
+    optional string book_name = 2;
+    optional string iso_language_code = 3;
+    optional string author_name = 4;
+    optional uint32 published_date = 5;
+    optional string description = 6;
+    optional uint32 rental_fee = 7;
+
+    // helps updating published_date to null
+    optional bool published_date_unknown = 8;
+}
+
+message Books {
+    repeated Book books_data = 1;
+}

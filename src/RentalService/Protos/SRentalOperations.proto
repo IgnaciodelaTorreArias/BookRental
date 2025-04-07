@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option csharp_namespace = "RentalService.Services.Operations";
+
+import "Resources/PaginatedResource.proto";
+import "Resources/LongResourceIdentifier.proto";
+
+package RentalService.Services.Operations;
+
+service SRentalOperations {
+	// /operations/rentals
+	// [Authorize (Roles = "operations")]
+	rpc GetConfirmedRentals(Commons.Messages.Resources.PaginatedResource) returns (ConfirmedRentals);
+	// /operations/rentals/{rental_id}
+	// [Authorize (Roles = "operations")])
+	rpc GetRental(Commons.Messages.Resources.LongResourceIdentifier) returns (ConfirmedRental);
+	// /operations/rentals
+	// [Authorize (Roles = "operations")])
+	rpc PostBookDelivered(Commons.Messages.Resources.LongResourceIdentifier) returns (Void);
+	// /operations/rentals/{rental_id}
+	// [Authorize (Roles = "operations")])
+	rpc PutRental(RentalBookReasignment) returns (Void);
+}
+
+message Void {}
+
+message ConfirmedRental {
+	uint64 identifier = 1;
+	uint32 book_id = 2;
+	uint32 copy_id = 3;
+	uint32 user_id = 4;
+	uint32 rental_fee = 5;
+}
+
+message ConfirmedRentals {
+	repeated ConfirmedRental rentals = 1;
+}
+
+message RentalBookReasignment {
+	uint64 rental_id = 1;
+	optional uint32 new_copy = 2;
+}

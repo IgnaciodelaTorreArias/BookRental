@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option csharp_namespace = "Commons.Messages.Resources";
+
+package Commons.Messages.Resources;
+
+message PaginatedResource{
+	uint32 page = 1;
+	uint32 size = 2;
+	optional uint32 identifier = 3;
+}
