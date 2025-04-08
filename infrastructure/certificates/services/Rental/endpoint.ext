@@ -1,0 +1,9 @@
+authorityKeyIdentifier = keyid,issuer
+basicConstraints = CA:FALSE
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth, serverAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = Rental
+DNS.2 = localhost

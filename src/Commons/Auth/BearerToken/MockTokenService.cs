@@ -8,9 +8,7 @@ namespace Commons.Auth.BearerToken
 
         public MockTokenService(IConfiguration config)
         {
-            string? token = config.GetValue<string>("token");
-            if (token is null)
-                throw new ArgumentNullException("Mock tocken not set");
+            string token = File.ReadAllText("token");
             _token = token;
         }
 

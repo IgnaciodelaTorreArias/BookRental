@@ -1,0 +1,20 @@
+[ req ]
+distinguished_name  = req_distinguished_name
+x509_extensions     = v3_usr
+prompt              = no         
+
+[ req_distinguished_name ]
+C  = XX
+ST = Local
+L  = DevCity
+O  = DevOrg
+OU = DevUnit
+CN = BookRental.APIGateway
+
+[ v3_usr ]
+subjectKeyIdentifier = hash
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = APIGateway
+DNS.2 = localhost

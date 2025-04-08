@@ -49,7 +49,7 @@ public class DtoBookPUT : IDtoIN<Book>, IValidatableObject
     {
         if (PublishedDateUnknown.HasValue)
         {
-            if (PublishedDateUnknown.Value != PublishedDate.HasValue)
+            if (PublishedDateUnknown.Value && !PublishedDate.HasValue)
             {
                 yield return new ValidationResult("`PublishedDateUnknow` and `PublishedDate` must be consistent");
             }

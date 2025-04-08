@@ -51,7 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         RSA credentials = RSA.Create();
-        credentials.ImportFromPem(builder.Configuration.GetValue<string>("public_key"));
+        credentials.ImportFromPem(File.ReadAllText("PublicKey.pem"));
         options.TokenValidationParameters = new()
         {
             // typ
@@ -65,6 +65,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true
         };
     });
+builder.Services.AddAuthorization();
 builder.Services.AddDbContextPool<RentalContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Rental"));

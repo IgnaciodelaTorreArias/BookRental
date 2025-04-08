@@ -1,5 +1,13 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python,csharp
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,csharp
+# Created by https://www.toptal.com/developers/gitignore/api/python,csharp,certificates
+# Edit at https://www.toptal.com/developers/gitignore?templates=python,csharp,certificates
+
+### certificates ###
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.priv
 
 ### Csharp ###
 ## Ignore Visual Studio temporary files, build results, and
@@ -569,4 +577,4 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
-# End of https://www.toptal.com/developers/gitignore/api/python,csharp
+# End of https://www.toptal.com/developers/gitignore/api/python,csharp,certificates

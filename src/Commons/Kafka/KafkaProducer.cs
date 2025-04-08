@@ -8,7 +8,10 @@ namespace Commons.Kafka
         private readonly IProducer<Null, byte[]> _producer;
         public KafkaProducer(IConfiguration configuration)
         {
-            ProducerConfig config = new();
+            ProducerConfig config = new()
+            {
+                BootstrapServers = configuration["Kafka:BootstrapServers"]
+            };
             configuration.GetSection("Kafka:Producer").Bind(config);
             _producer = new ProducerBuilder<Null, byte[]>(config).Build();
         }

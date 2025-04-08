@@ -29,7 +29,10 @@ public class KafkaConsumer : BackgroundService
         ILogger<KafkaConsumer> logger
     )
     {
-        ConsumerConfig config = new();
+        ConsumerConfig config = new()
+        {
+            BootstrapServers = configuration["Kafka:BootstrapServers"]
+        };
         configuration.GetSection("Kafka:Consumer").Bind(config);
         config.EnableAutoCommit = false;
         config.AutoOffsetReset = AutoOffsetReset.Earliest;

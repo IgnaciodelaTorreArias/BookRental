@@ -1,0 +1,15 @@
+[ req ]
+distinguished_name  = req_distinguished_name
+x509_extensions     = v3_usr
+prompt              = no         
+
+[ req_distinguished_name ]
+C  = XX
+ST = Local
+L  = DevCity
+O  = DevOrg
+OU = DevUnit
+CN = BookRental.Inventory
+
+[ v3_usr ]
+subjectKeyIdentifier = hash

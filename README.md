@@ -77,3 +77,26 @@ In the Inventory Database i have a `stock` table it has a field `book_id`, that 
 In the Rental Database i have a `waiting_list` table `notified`, etc. These tables are constantly being "purged", and represent different stages of a rental waiting_list->notified->confirmed. One could argue about this design, but again this is just what i wanted.
 
 A connection pooling mechanism for the databases would be nice.
+
+## Usage
+
+Firs you need to generate the certificates, use [certificates.sh](./infrastructure/certificates/certificates.sh), this uses openssl, if you are on windows you can use wsl or install openssl.
+
+Next for running one service you need to set the environment variables of the .env files.
+This can be done manually
+
+~~~ps
+$env:FOO='BAR'
+~~~
+
+>Note: don't use Set-Variable, this are powershell variables not environment variables.
+
+You can also use [.\activate-env.ps1](activate-env.ps1)
+
+~~~ps
+.\activate-env.ps1 {PATH TO *.env FILE}
+~~~
+
+### Important ⚠️
+
+The order of the .env files matter, first you need to activate the file `./infrastructure/certificates/*.env` this file defines passwords for the .pfx files. This passwords are reused/renamed in the .env files inside each service. If you try to activate `src/*/*.env` before `./infrastructure/certificates/*.env` the script `.\activate-env.ps1` won't work and if you are on linux the setup won't work.

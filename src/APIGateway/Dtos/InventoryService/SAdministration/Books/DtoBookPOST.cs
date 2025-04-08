@@ -3,7 +3,7 @@ using InventoryService.Services.Administration;
 
 namespace APIGateway.Dtos.InventoryService.SAdministration.Books;
 
-public class DtoBookPOST : IDtoIN<Book>, IValidatableObject
+public class DtoBookPOST : IDtoIN<Book>
 {
     [Required]
     [StringLength(255)]
@@ -37,8 +37,8 @@ public class DtoBookPOST : IDtoIN<Book>, IValidatableObject
             message.Description = Description;
         if (Visible.HasValue)
             message.Visible = Visible.Value;
-        if (PublishedDateUnknown.HasValue)
-            message.PublishedDateUnknown = PublishedDateUnknown.Value;
+        if (!PublishedDate.HasValue)
+            message.PublishedDateUnknown = true;
         return message;
     }
 
@@ -46,7 +46,7 @@ public class DtoBookPOST : IDtoIN<Book>, IValidatableObject
     {
         if (PublishedDateUnknown.HasValue)
         {
-            if (PublishedDateUnknown.Value != PublishedDate.HasValue)
+            if (PublishedDateUnknown.Value && !PublishedDate.HasValue)
             {
                 yield return new ValidationResult("`PublishedDateUnknow` and `PublishedDate` must be consistent");
             }
