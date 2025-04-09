@@ -1,4 +1,7 @@
 #!/bin/bash
+
+cd $(dirname "$(realpath "$0")")
+
 openssl genrsa -out BookRentalCA.key 4096
 openssl req -x509 -new -nodes -key BookRentalCA.key -sha256 -days 1825 -out BookRentalCA.crt -config development.cnf
 openssl genrsa -out services/APIGateway/APIGateway.key 4096
@@ -17,7 +20,7 @@ rm services/APIGateway/APIGateway.csr
 rm services/Inventory/Inventory.csr
 rm services/Rental/Rental.csr
 
-source testing.env
+source ../../testing.env
 openssl pkcs12 -export -out services/APIGateway/APIGateway.pfx -inkey services/APIGateway/APIGateway.key -in services/APIGateway/APIGateway.crt -certfile BookRentalCA.crt -password pass:$APIGATEWAY_PASS
 openssl pkcs12 -export -out services/Inventory/Inventory.pfx -inkey services/Inventory/Inventory.key -in services/Inventory/Inventory.crt -certfile BookRentalCA.crt -password pass:$INVENTORY_PASS
 openssl pkcs12 -export -out services/Rental/Rental.pfx -inkey services/Rental/Rental.key -in services/Rental/Rental.crt -certfile BookRentalCA.crt -password pass:$RENTAL_PASS

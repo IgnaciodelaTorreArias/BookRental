@@ -82,6 +82,12 @@ A connection pooling mechanism for the databases would be nice.
 
 Firs you need to generate the certificates, use [certificates.sh](./infrastructure/certificates/certificates.sh), this uses openssl, if you are on windows you can use wsl or install openssl.
 
+Dependencies: Services depend on BD/Kafka/OTEL-LGTM to get the dependencies running use the command:
+
+~~~ps
+docker compose --env-file .\testing.env -f .\docker-compose.test.yml up --build
+~~~
+
 Next for running one service you need to set the environment variables of the .env files.
 This can be done manually
 
@@ -99,4 +105,4 @@ You can also use [.\activate-env.ps1](activate-env.ps1)
 
 ### Important ⚠️
 
-The order of the .env files matter, first you need to activate the file `./infrastructure/certificates/*.env` this file defines passwords for the .pfx files. This passwords are reused/renamed in the .env files inside each service. If you try to activate `src/*/*.env` before `./infrastructure/certificates/*.env` the script `.\activate-env.ps1` won't work and if you are on linux the setup won't work.
+The order of the .env files matter, first you need to activate the file `./*.env` this file centralizes definitions of passwords, connection strings, etc for all services. This passwords are reused/renamed in the *.env files inside each service. If you try to activate `src/*/*.env` before `./infrastructure/certificates/*.env` the script `.\activate-env.ps1` won't work and if you are on linux the environment variables will be incorrect.
