@@ -1,4 +1,4 @@
-﻿namespace Commons.Auth.BearerToken;
+namespace Commons.Auth.BearerToken;
 
 public interface ITokenService
 {

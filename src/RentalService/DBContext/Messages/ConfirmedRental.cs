@@ -1,4 +1,4 @@
-﻿using OServices = RentalService.Services.Operations;
+using OServices = RentalService.Services.Operations;
 using UServices = RentalService.Services.User;
 
 namespace RentalService.DBContext.Models;

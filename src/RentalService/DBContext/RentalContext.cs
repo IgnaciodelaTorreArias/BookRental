@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RentalService.DBContext.Models;
 
 namespace RentalService.DBContext;

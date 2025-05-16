@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace Commons.Auth.BearerToken
 {
@@ -6,7 +6,7 @@ namespace Commons.Auth.BearerToken
     {
         private readonly string _token;
 
-        public MockTokenService(IConfiguration config)
+        public MockTokenService()
         {
             string token = File.ReadAllText("token");
             _token = token;

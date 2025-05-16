@@ -1,4 +1,4 @@
-﻿namespace APIGateway.Dtos;
+namespace APIGateway.Dtos;
 
 public interface IDtoIN<TMessage>
 {

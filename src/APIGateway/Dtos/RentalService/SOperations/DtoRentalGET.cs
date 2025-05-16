@@ -1,4 +1,4 @@
-﻿using RentalService.Services.Operations;
+using RentalService.Services.Operations;
 
 namespace APIGateway.Dtos.RentalService.SOperations;
 

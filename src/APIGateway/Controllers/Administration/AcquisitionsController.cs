@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using Grpc.Core;
 
-using InventoryService.Services.Administration;
-
-using APIGateway.Dtos.InventoryService.SAdministration.Acquisitions;
+using Inventory.Public.Services.Administration;
+using APIGateway.Dtos.Inventory.SAdministration.Acquisitions;
 
 namespace APIGateway.Controllers.Administration;
 

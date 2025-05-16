@@ -1,4 +1,4 @@
-﻿CREATE TABLE rental.books
+CREATE TABLE rental.books
 (
     book_id integer NOT NULL,
     rental_fee integer NOT NULL,

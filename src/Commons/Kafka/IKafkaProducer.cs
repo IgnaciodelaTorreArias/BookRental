@@ -1,4 +1,4 @@
-﻿namespace Commons.Kafka
+namespace Commons.Kafka
 {
     public interface IKafkaProducer
     {

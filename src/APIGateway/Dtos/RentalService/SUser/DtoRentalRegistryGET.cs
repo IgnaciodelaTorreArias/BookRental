@@ -1,4 +1,4 @@
-﻿using RentalService.Services.User;
+using RentalService.Services.User;
 
 namespace APIGateway.Dtos.RentalService.SUser;
 

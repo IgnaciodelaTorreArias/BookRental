@@ -9,8 +9,8 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-using SIAdministration = InventoryService.Services.Administration;
-using SIUser = InventoryService.Services.Users;
+using SIAdministration = Inventory.Public.Services.Administration;
+using SIConsumer = Inventory.Public.Services.Consumer;
 using SROperations = RentalService.Services.Operations;
 using SRUser = RentalService.Services.User;
 
@@ -24,6 +24,7 @@ builder.Logging.AddOpenTelemetry(options =>
     options.IncludeFormattedMessage = true;
     options.IncludeScopes = true;
     options.ParseStateValues = true;
+    options.AddConsoleExporter();
 });
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService("APIGateway"))
@@ -46,17 +47,17 @@ builder.Services.AddGrpcClient<SIAdministration.SInvenotryAdministration.SInveno
 {
     o.Address = new Uri("https://localhost:5501"); // TODO: Change for services names when all services are fully dockerized
 });
-builder.Services.AddGrpcClient<SIUser.SInventory.SInventoryClient>(o =>
+builder.Services.AddGrpcClient<SIConsumer.SInventoryConsumer.SInventoryConsumerClient>(o =>
 {
     o.Address = new Uri("https://localhost:5501");
 });
 builder.Services.AddGrpcClient<SROperations.SRentalOperations.SRentalOperationsClient>(o =>
 {
-    o.Address = new Uri("https://localhost:5502");
+    o.Address = new Uri("https://localhost:5505");
 });
 builder.Services.AddGrpcClient<SRUser.SRental.SRentalClient>(o =>
 {
-    o.Address = new Uri("https://localhost:5502");
+    o.Address = new Uri("https://localhost:5505");
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

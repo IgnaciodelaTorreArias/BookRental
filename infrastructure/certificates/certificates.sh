@@ -26,5 +26,8 @@ openssl pkcs12 -export -out services/Inventory/Inventory.pfx -inkey services/Inv
 openssl pkcs12 -export -out services/Rental/Rental.pfx -inkey services/Rental/Rental.key -in services/Rental/Rental.crt -certfile BookRentalCA.crt -password pass:$RENTAL_PASS
 
 cp services/APIGateway/APIGateway.pfx ../../src/APIGateway
-cp services/Inventory/Inventory.pfx ../../src/InventoryService
+cp services/Inventory/Inventory.pfx ../../src/Inventory/Public
+cp services/Inventory/Inventory.pfx ../../src/Inventory/Internal
+cp BookRentalCA.crt ../../src/Inventory/Internal
 cp services/Rental/Rental.pfx ../../src/RentalService
+cp BookRentalCA.crt ../../src/RentalService

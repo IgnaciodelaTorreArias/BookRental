@@ -1,23 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Grpc.Core;
 
 using RentalService.Services.User;
-using InventoryService.Services.Users;
-
-using APIGateway.Dtos.InventoryService.SUser.Books;
+using Inventory.Public.Services.Consumer;
+using APIGateway.Dtos.Inventory.SConsumer.Books;
 
 namespace APIGateway.Controllers.Users;
 
 [Route("[controller]")]
 [ApiController]
 public class BooksController(
-    SInventory.SInventoryClient clientI,
+    SInventoryConsumer.SInventoryConsumerClient clientI,
     SRental.SRentalClient clientR
 ) : ControllerBase
 {
-    private readonly SInventory.SInventoryClient _clientI = clientI;
+    private readonly SInventoryConsumer.SInventoryConsumerClient _clientI = clientI;
     private readonly SRental.SRentalClient _clientR = clientR;
 
 #pragma warning disable CS8604 // Possible null reference argument.

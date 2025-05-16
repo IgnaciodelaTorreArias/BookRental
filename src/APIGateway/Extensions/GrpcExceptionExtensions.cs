@@ -1,4 +1,4 @@
-﻿using Grpc.Core;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIGateway.Extensions;

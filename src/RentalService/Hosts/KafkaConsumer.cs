@@ -1,10 +1,10 @@
-﻿using Confluent.Kafka;
+using Confluent.Kafka;
 using Microsoft.EntityFrameworkCore;
 using Google.Protobuf;
 
 using Commons.Kafka;
 using Commons.Auth.BearerToken;
-using InventoryService.Services.System;
+using Inventory.Internal.Services;
 
 using RentalService.DBContext;
 using RentalService.DBContext.Models;
@@ -15,16 +15,14 @@ public class KafkaConsumer : BackgroundService
 {
     private readonly IConsumer<Ignore, byte[]> _consumer;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly ITokenService _tokenService;
-    private readonly SBookLend.SBookLendClient _client;
+    private readonly SInventorySystem.SInventorySystemClient _client;
     private readonly IKafkaProducer _producer;
     private readonly ILogger _logger;
 
     public KafkaConsumer(
         IConfiguration configuration,
         IServiceScopeFactory serviceScopeFactory,
-        ITokenService tokenService,
-        SBookLend.SBookLendClient client,
+        SInventorySystem.SInventorySystemClient client,
         IKafkaProducer producer,
         ILogger<KafkaConsumer> logger
     )
@@ -38,7 +36,6 @@ public class KafkaConsumer : BackgroundService
         config.AutoOffsetReset = AutoOffsetReset.Earliest;
         _consumer = new ConsumerBuilder<Ignore, byte[]>(config).Build();
         _serviceScopeFactory = serviceScopeFactory;
-        _tokenService = tokenService;
         _client = client;
         _producer = producer;
         _logger = logger;
@@ -141,10 +138,7 @@ public class KafkaConsumer : BackgroundService
         while (true)
         {
             using IServiceScope scope = _serviceScopeFactory.CreateScope();
-            string token = await _tokenService.GetTokenAsync();
-            Commons.Messages.Resources.ResourceIdentifier result = await _client.ReserveBookAsync(new() { Identifier = book.Identifier }, new Grpc.Core.Metadata() {
-                { "Authorization", $"Bearer {token}" }
-            });
+            Commons.Messages.Resources.ResourceIdentifier result = await _client.ReserveBookAsync(new() { Identifier = book.Identifier });
             if (result.Identifier == 0)
                 return;
             RentalContext? _context = scope.ServiceProvider.GetService<RentalContext>();

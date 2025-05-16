@@ -1,8 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
+using Microsoft.EntityFrameworkCore;
 
 using OpenTelemetry;
 using OpenTelemetry.Resources;
@@ -10,10 +11,10 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-using Commons.GrpcInterceptors;
-using Commons.Auth.BearerToken;
 using Commons.Kafka;
-using InventoryService.Services.System;
+using Commons.GrpcInterceptors;
+
+using Inventory.Internal.Services;
 
 using RentalService.DBContext;
 using RentalService.Services.Operations;
@@ -28,6 +29,7 @@ builder.Logging.AddOpenTelemetry(options =>
     options.IncludeFormattedMessage = true;
     options.IncludeScopes = true;
     options.ParseStateValues = true;
+    options.AddConsoleExporter();
 });
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService("RentalService"))
@@ -45,7 +47,6 @@ builder.Services.AddOpenTelemetry()
     )
     .UseOtlpExporter(OpenTelemetry.Exporter.OtlpExportProtocol.Grpc, new Uri("http://localhost:4317"));
 
-builder.Services.AddSingleton<ITokenService, MockTokenService>();
 builder.Services.AddSingleton<IKafkaProducer, KafkaProducer>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -70,9 +71,29 @@ builder.Services.AddDbContextPool<RentalContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Rental"));
 });
-builder.Services.AddGrpcClient<SBookLend.SBookLendClient>(o =>
+var certificate = X509CertificateLoader.LoadPkcs12FromFile("Rental.pfx", builder.Configuration["Kestrel:Endpoints:Rental:Certificate:Password"]);
+var caCert = X509CertificateLoader.LoadCertificateFromFile("BookRentalCA.crt");
+builder.Services.AddGrpcClient<SInventorySystem.SInventorySystemClient>(o =>
 {
-    o.Address = new Uri("https://localhost:5501");
+    o.Address = new Uri("https://localhost:5502");
+    o.ChannelOptionsActions.Add(channelOptions =>
+    {
+        var handler = new HttpClientHandler();
+        handler.ClientCertificates.Add(certificate);
+        handler.ServerCertificateCustomValidationCallback = (_, cert, _, _) =>
+        {
+            if (cert == null)
+                return false;
+            var customChain = new X509Chain();
+            customChain.ChainPolicy.ExtraStore.Add(caCert);
+            customChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+            customChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            if (!customChain.Build(cert))
+                return false;
+            return customChain.ChainElements.Any(c => c.Certificate.Equals(caCert));
+        };
+        channelOptions.HttpHandler = handler;
+    });
 });
 builder.Services.AddGrpc(options =>
 {

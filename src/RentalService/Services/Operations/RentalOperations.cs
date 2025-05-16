@@ -1,11 +1,11 @@
-﻿using Grpc.Core;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 using Commons.Extensions;
 using Commons.Messages.Resources;
 using Commons.Auth.BearerToken;
-using InventoryService.Services.System;
+using Inventory.Internal.Services;
 
 using RentalService.DBContext;
 using DBM = RentalService.DBContext.Models;
@@ -15,14 +15,12 @@ namespace RentalService.Services.Operations;
 [Authorize(Roles = "operations")]
 public class RentalOperations(
     RentalContext context,
-    SBookLend.SBookLendClient client,
-    ITokenService token,
+    SInventorySystem.SInventorySystemClient client,
     ILogger<RentalOperations> logger
 ) : SRentalOperations.SRentalOperationsBase
 {
     private readonly RentalContext _context = context;
-    private readonly SBookLend.SBookLendClient _client = client;
-    private readonly ITokenService _tokenService = token;
+    private readonly SInventorySystem.SInventorySystemClient _client = client;
     private readonly ILogger<RentalOperations> _logger = logger;
 
     public override async Task<ConfirmedRentals> GetConfirmedRentals(PaginatedResource request, ServerCallContext context)
@@ -76,11 +74,7 @@ public class RentalOperations(
             .FirstOrDefaultAsync(rental => rental.Identifier == (long)request.RentalId);
         if (rental is null)
             return new();
-        string token = await _tokenService.GetTokenAsync();
-        ResourceIdentifier response = await _client.ReserveBookAsync(new() { Identifier = (uint)rental.BookId }, new Metadata()
-        {
-            {"Authorization", $"Bearer {token}" }
-        });
+        ResourceIdentifier response = await _client.ReserveBookAsync(new() { Identifier = (uint)rental.BookId });
         if (response.Identifier == 0)
             throw new RpcException(new Status(StatusCode.FailedPrecondition, "Out of Stock"));
         rental.CopyId = (int)response.Identifier;

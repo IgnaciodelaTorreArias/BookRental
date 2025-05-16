@@ -23,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\InventoryService\Protos\SInventory.proto" GrpcServices="Client" AdditionalImportDirs="..\Commons\Messages">
-      <Link>Protos\SInventory.proto</Link>
-    </Protobuf>
-    <Protobuf Include="..\InventoryService\Protos\SInventoryAdministration.proto" GrpcServices="Client" AdditionalImportDirs="..\Commons\Messages">
+    <Protobuf Include="..\Inventory\Public\Protos\SInventoryAdministration.proto" GrpcServices="Client" AdditionalImportDirs="..\Commons\Messages">
       <Link>Protos\SInventoryAdministration.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\Inventory\Public\Protos\SInventoryConsumer.proto" GrpcServices="Client" AdditionalImportDirs="..\Commons\Messages">
+      <Link>Protos\SInventoryConsumer.proto</Link>
     </Protobuf>
     <Protobuf Include="..\RentalService\Protos\SRental.proto" GrpcServices="Client" AdditionalImportDirs="..\Commons\Messages">
       <Link>Protos\SRental.proto</Link>
@@ -40,5 +40,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Commons\Commons.csproj" />
   </ItemGroup>
-	
+    
 </Project>

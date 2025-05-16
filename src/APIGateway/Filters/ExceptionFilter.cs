@@ -1,4 +1,4 @@
-﻿using APIGateway.Extensions;
+using APIGateway.Extensions;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

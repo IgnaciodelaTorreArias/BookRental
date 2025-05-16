@@ -1,4 +1,4 @@
-﻿using Grpc.Core.Interceptors;
+using Grpc.Core.Interceptors;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 

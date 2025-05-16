@@ -1,4 +1,4 @@
-﻿CREATE DATABASE "Inventory"
+CREATE DATABASE "Inventory"
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'

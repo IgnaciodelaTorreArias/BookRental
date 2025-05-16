@@ -1,4 +1,4 @@
-﻿using Grpc.Core;
+using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Google.Protobuf;
@@ -7,7 +7,7 @@ using Commons.Kafka;
 using Commons.Auth.BearerToken;
 using Commons.Extensions;
 using Commons.Messages.Resources;
-using InventoryService.Services.System;
+using Inventory.Internal.Services;
 
 using RentalService.DBContext;
 
@@ -16,14 +16,12 @@ namespace RentalService.Services.User;
 [Authorize(Roles = "user")]
 public class Rental(
     RentalContext context,
-    SBookLend.SBookLendClient client,
-    ITokenService token,
+    SInventorySystem.SInventorySystemClient client,
     IKafkaProducer producer
 ) : SRental.SRentalBase
 {
     private readonly RentalContext _context = context;
-    private readonly SBookLend.SBookLendClient _client = client;
-    private readonly ITokenService _tokenService = token;
+    private readonly SInventorySystem.SInventorySystemClient _client = client;
     private readonly IKafkaProducer _producer = producer;
 
     public override async Task<RentalResult> PostBookRental(ResourceIdentifier request, ServerCallContext context)
@@ -40,11 +38,7 @@ public class Rental(
             await _context.SaveChangesAsync();
             return new() { Status = RentalStatus.JoinedWaitingList };
         }
-        string token = await _tokenService.GetTokenAsync();
-        ResourceIdentifier response = await _client.ReserveBookAsync(new() { Identifier = request.Identifier }, new Metadata()
-        {
-            {"Authorization", $"Bearer {token}" }
-        });
+        ResourceIdentifier response = await _client.ReserveBookAsync(new() { Identifier = request.Identifier });
         if (response.Identifier != 0)
         {
             _context.ConfirmedRentals.Add(new() { BookId = (int)request.Identifier, CopyId = (int)response.Identifier, UserId = userId, RentalFee = book.RentalFee });

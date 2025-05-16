@@ -1,4 +1,4 @@
-﻿using Grpc.Core;
+using Grpc.Core;
 using System.Security.Claims;
 
 namespace Commons.Extensions;
