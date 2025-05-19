@@ -18,12 +18,12 @@ public partial class InventoryAdministration
     public override async Task<Acquisitions> GetRecentAcquisitions(PaginatedResource request, ServerCallContext context)
     {
         request.Validate();
-        List<Acquisition> acquisitions = await _context.Acquisitions
+        var acquisitions = await _context.Acquisitions
             .OrderByDescending(acquisition => acquisition.AcquisitionId)
             .Skip(request.Offset)
             .Take(request.Limit)
             .Select(acquisition => acquisition.Message())
-            .ToListAsync();
+            .ToArrayAsync();
         return new() { AcquisitionsData = { acquisitions } };
     }
 
@@ -42,7 +42,6 @@ public partial class InventoryAdministration
     public override async Task<Acquisition> PostAcquisition(Acquisition request, ServerCallContext context)
     {
         request.Validate();
-
         DBM.Acquisition acquisition = new();
         acquisition.FromMessage(request);
         _context.Acquisitions.Add(acquisition);

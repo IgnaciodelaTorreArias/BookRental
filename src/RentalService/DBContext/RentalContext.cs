@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using RentalService.DBContext.Models;
 
@@ -41,6 +43,8 @@ public partial class RentalContext : DbContext
         {
             entity.HasKey(e => e.Identifier).HasName("confirmed_rentals_pkey");
 
+            entity.HasIndex(e => e.UserId, "confirmed_rentals_user_id_idx").HasMethod("hash");
+
             entity.Property(e => e.Identifier).UseIdentityAlwaysColumn();
             entity.Property(e => e.ConfirmedAt).HasDefaultValueSql("now()");
         });
@@ -58,6 +62,8 @@ public partial class RentalContext : DbContext
 
             entity.HasIndex(e => new { e.CopyId, e.UserId }, "notified_copy_id_user_id_idx").HasAnnotation("Npgsql:StorageParameter:deduplicate_items", "true");
 
+            entity.HasIndex(e => e.UserId, "notified_user_id_idx").HasMethod("hash");
+
             entity.Property(e => e.NotificationId).UseIdentityAlwaysColumn();
             entity.Property(e => e.NotifiedAt).HasDefaultValueSql("now()");
         });
@@ -65,6 +71,8 @@ public partial class RentalContext : DbContext
         modelBuilder.Entity<Rental>(entity =>
         {
             entity.HasKey(e => new { e.RentalId, e.Quarter }).HasName("rentals_pkey");
+
+            entity.HasIndex(e => e.UserId, "rentals_user_id_idx").HasMethod("hash");
 
             entity.Property(e => e.RentalId)
                 .ValueGeneratedOnAdd()
@@ -84,6 +92,8 @@ public partial class RentalContext : DbContext
             entity.HasKey(e => e.WaitingId).HasName("waiting_list_pkey");
 
             entity.HasIndex(e => e.BookId, "waiting_list_book_id_idx").HasMethod("hash");
+
+            entity.HasIndex(e => e.UserId, "waiting_list_user_id_idx").HasMethod("hash");
 
             entity.Property(e => e.WaitingId).UseIdentityAlwaysColumn();
             entity.Property(e => e.JoinedAt).HasDefaultValueSql("now()");

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Google.Protobuf;
 
+using Qdrant.Client.Grpc;
+
 using Commons.Kafka;
 using Commons.Extensions;
 using Commons.Messages.Resources;
@@ -14,16 +16,24 @@ namespace Inventory.Public.Services.Administration;
 
 public partial class InventoryAdministration
 {
+    async Task UpsertBookEmbeddings(string description, uint id)
+    {
+        DenseVector vector = new();
+        vector.Data.AddRange(_sentencesModel.GetEmbeddings(description));
+        await _qdrant.UpsertAsync("books", [
+            new PointStruct() { Id = new PointId { Num = id }, Vectors = new Vectors { Vector = new Vector { Dense = vector } } }
+        ]);
+    }
     [Authorize(Roles = "acquisitions, operations, admin")]
     public override async Task<Books> GetRecentBooksAdministration(PaginatedResource request, ServerCallContext context)
     {
         request.Validate();
-        List<Book> books = await _context.Books
+        var books = await _context.Books
             .OrderByDescending(book => book.BookId)
             .Skip(request.Offset)
             .Take(request.Limit)
             .Select(book => book.ToPrivateMessage())
-            .ToListAsync();
+            .ToArrayAsync();
         return new() { BooksData = { books } };
     }
 
@@ -50,7 +60,10 @@ public partial class InventoryAdministration
         Book result = book.ToPrivateMessage();
         KafkaBook message = result.KafkaBook();
         message.Operation = BookOperation.Created;
-        await _producer.ProduceAsync("book_management", message.ToByteArray());
+        await Task.WhenAll(
+            UpsertBookEmbeddings(result.Description, result.BookId),
+            _producer.ProduceAsync("book_management", message.ToByteArray())
+        );
         _logger.LogInformation("{{\"Event\":\"BookCreated\",\"Book\":{result},\"User\":{user}}}", result, context.GetUserId());
         return result;
     }
@@ -65,10 +78,16 @@ public partial class InventoryAdministration
         if (book is null)
             throw new RpcException(new Status(StatusCode.NotFound, "The book you were searching for was not found"));
         book.Update(request);
-        await _context.SaveChangesAsync();
+        if (request.HasDescription)
+            await Task.WhenAll(
+                UpsertBookEmbeddings(request.Description, request.BookId),
+                _context.SaveChangesAsync()
+            );
+        else
+            await _context.SaveChangesAsync();
         KafkaBook message = request.KafkaBook();
         message.Operation = BookOperation.Updated;
-        if (message.HasDescription || message.HasRentalFee || message.HasVisible)
+        if (message.HasRentalFee || message.HasVisible)
             await _producer.ProduceAsync("book_management", message.ToByteArray());
         _logger.LogInformation("{{\"Event\":\"BookUpdated\",\"Book\":{request},\"User\":{user}}}", request, context.GetUserId());
         return book.ToPrivateMessage();

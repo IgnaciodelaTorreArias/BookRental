@@ -5,12 +5,12 @@ namespace Commons.Extensions;
 
 public static class ServerCallContextExtension
 {
-    public static int GetUserId(this ServerCallContext context)
+    public static uint GetUserId(this ServerCallContext context)
     {
         Claim? id = context.GetHttpContext().User.FindFirst(ClaimTypes.NameIdentifier);
         if (id == null)
             throw new RpcException(new Status(StatusCode.Unauthenticated, "User is not authenticated"));
-        return int.Parse(id.Value);
+        return uint.Parse(id.Value);
     }
     public static string GetUserRole(this ServerCallContext context)
     {

@@ -17,12 +17,15 @@ The project is the backend of a Book Rental Company.
 │  ├─ API Gateway
 │  └─ Direct client-to-service
 ├─ Database
+│  ├─ Shared Vector Index
 │  └─ Database per Service
 ├─ Security
+│  ├─ mTLS
 │  └─ Access token
 │    └─ Claims-Based Authorization/RBAC
 └─ Observability
    ├─ Centralized Logging (Loki)
+   │  └─ Event Sourcing
    ├─ Control panel (Grafana)
    ├─ Distributed Tracing (Tempo)
    └─ Centralized Metrics (Prometheus)
@@ -38,8 +41,6 @@ The project is the backend of a Book Rental Company.
 
 - Admin: Responsible for managing personal and correcting mistakes.
 
-- System: A special role for the system. Some services like inventory are client facing services, meaning clients can call the service directly, but other services shouldn't be called by users but by other services. When a service (A) needs to call one of those non-user services (B), then the service (A) gets a token with the "System" role and uses it to authorize its call to the non-user service (B).
-
 ### forging
 
 The public Key used in appsettings comes from:
@@ -51,10 +52,6 @@ The public Key used in appsettings comes from:
 
 - Inventory: Manages Books inventory.
 - Rental. Manages Book Rental.
-
-### Planned
-
-- Recommendation. Given the books description uses AI to get embeddings and stores them in a Vector DB. I plan to create this service using python and "sentence-transformers/all-MiniLM-L6-v2".
 
 ### Never
 
@@ -80,9 +77,9 @@ A connection pooling mechanism for the databases would be nice.
 
 ## Usage
 
-Firs you need to generate the certificates, use [certificates.sh](./infrastructure/certificates/certificates.sh), this uses openssl, if you are on windows you can use wsl or install openssl.
+First you need to generate the certificates, use [certificates.sh](./infrastructure/certificates/certificates.sh), this uses openssl, if you are on windows you can use wsl or install openssl.
 
-Dependencies: Services depend on BD/Kafka/OTEL-LGTM to get the dependencies running use the command:
+Dependencies: Services depend on DB/Kafka/OTEL-LGTM to get the dependencies running use the command:
 
 ~~~ps
 docker compose --env-file .\testing.env -f .\docker-compose.test.yml up --build
@@ -105,4 +102,4 @@ You can also use [.\activate-env.ps1](activate-env.ps1)
 
 ### Important ⚠️
 
-The order of the .env files matter, first you need to activate the file `./*.env` this file centralizes definitions of passwords, connection strings, etc for all services. This passwords are reused/renamed in the *.env files inside each service. If you try to activate `src/*/*.env` before `./infrastructure/certificates/*.env` the script `.\activate-env.ps1` won't work and if you are on linux the environment variables will be incorrect.
+The order of the .env files matter, first you need to activate the file `./*.env` this file centralizes definitions of passwords, connection strings, etc for all services. This passwords are reused/renamed in the *.env files inside each service. If you try to activate `src/*/*.env` before `./*.env` the script `.\activate-env.ps1` won't work and if you are on linux the environment variables will be incorrect.

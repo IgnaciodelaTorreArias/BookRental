@@ -26,12 +26,12 @@ public class RentalOperations(
     public override async Task<ConfirmedRentals> GetConfirmedRentals(PaginatedResource request, ServerCallContext context)
     {
         request.Validate();
-        List<ConfirmedRental> rentals = await _context.ConfirmedRentals
+        var rentals = await _context.ConfirmedRentals
             .OrderByDescending(rental => rental.Identifier)
             .Skip(request.Offset)
             .Take(request.Limit)
             .Select(rental => rental.PrivateMessage())
-            .ToListAsync();
+            .ToArrayAsync();
         return new() { Rentals = { rentals } };
     }
 
@@ -48,9 +48,9 @@ public class RentalOperations(
     public override async Task<Void> PostBookDelivered(LongResourceIdentifier request, ServerCallContext context)
     {
         request.Validate();
-        int confirmer = context.GetUserId();
+        uint confirmer = context.GetUserId();
         long? rental = await _context.Database.SqlQuery<long?>(
-                $"SELECT inventory.initiate_rental({(long)request.Identifier},{confirmer}) AS \"Value\""
+                $"SELECT inventory.initiate_rental({(long)request.Identifier},{(int)confirmer}) AS \"Value\""
             ).FirstAsync();
         if (rental is null)
             throw new RpcException(new Status(StatusCode.NotFound, "Rental not found"));

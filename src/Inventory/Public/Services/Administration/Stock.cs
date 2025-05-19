@@ -20,13 +20,13 @@ public partial class InventoryAdministration
         request.Validate();
         if (!request.HasIdentifier)
             throw new RpcException(new Status(StatusCode.InvalidArgument, "`Identifier` is required for this operation"));
-        List<BookCopy> copies = await _context.Stocks
+        var copies = await _context.Stocks
             .Where(copy => copy.AcquisitionId == (int)request.Identifier)
             .OrderBy(copy => copy.CopyId)
             .Skip(request.Offset)
             .Take(request.Limit)
             .Select(copy => copy.Message())
-            .ToListAsync();
+            .ToArrayAsync();
         return new() { Copies = { copies } };
     }
 

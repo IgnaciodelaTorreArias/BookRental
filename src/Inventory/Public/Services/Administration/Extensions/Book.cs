@@ -33,8 +33,6 @@ public partial class Book
         {
             Identifier = BookId
         };
-        if (HasDescription)
-            message.Description = Description;
         if (HasRentalFee)
             message.RentalFee = RentalFee;
         if (HasVisible)

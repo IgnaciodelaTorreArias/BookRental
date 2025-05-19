@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option csharp_namespace = "Inventory.Public.Services.Consumer";
 
+import "google/protobuf/empty.proto";
+
 import "Resources/PaginatedResource.proto";
 import "Resources/ResourceIdentifier.proto";
 
@@ -12,6 +14,11 @@ service SInventoryConsumer {
     rpc GetRecentBooks (Commons.Messages.Resources.PaginatedResource) returns (Books);
     // /books/{book_id}
     rpc GetBook (Commons.Messages.Resources.ResourceIdentifier) returns (Book);
+    // /books/recomendations/{book_id}
+    rpc GetSimilarBooks (Commons.Messages.Resources.ResourceIdentifier) returns (Books);
+    // /books/recomendations
+    // [Authorize(Roles = "user")]
+    rpc GetRecommendedBooks (google.protobuf.Empty) returns (Books);
 }
 
 message Book {

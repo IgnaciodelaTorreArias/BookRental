@@ -1,0 +1,8 @@
+log_level: INFO
+service:
+  enable_tls: true
+  verify_https_client_certificate: true
+tls:
+  cert: /certs/embeddings.crt
+  key: /certs/embeddings.key
+  ca_cert: /certs/BookRentalCA.crt

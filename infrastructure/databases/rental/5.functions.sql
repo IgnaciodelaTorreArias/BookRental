@@ -97,7 +97,7 @@ GRANT EXECUTE ON FUNCTION rental.reassign_expired_notification() TO postgres;
 CREATE OR REPLACE FUNCTION rental.user_confirmed_rental(
 	book_copy integer,
 	confirmer_user integer)
-    RETURNS boolean
+    RETURNS integer
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE SECURITY DEFINER PARALLEL UNSAFE
@@ -111,12 +111,12 @@ BEGIN
 	
 	IF selected_record IS NULL THEN
 		-- Too late, the reservation expired
-        RETURN FALSE;
+        RETURN NULL;
     END IF;
 	
 	INSERT INTO rental.confirmed_rentals (book_id, copy_id, user_id, rental_fee)
 	VALUES (selected_record.book_id, book_copy, confirmer_user, selected_record.rental_fee);
-	RETURN TRUE;
+	RETURN selected_record.book_id;
 END;
 $BODY$;
 

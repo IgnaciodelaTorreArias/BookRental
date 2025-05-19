@@ -15,7 +15,8 @@ builder.WebHost.ConfigureKestrel(options =>
     options.ConfigureHttpsDefaults(httpsOptions =>
     {
         httpsOptions.CheckCertificateRevocation = false;
-        httpsOptions.ClientCertificateValidation = (cert, _, _) => {
+        httpsOptions.ClientCertificateValidation = (cert, _, _) =>
+        {
             var customChain = new X509Chain();
             customChain.ChainPolicy.ExtraStore.Add(caCert);
             customChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
@@ -26,7 +27,6 @@ builder.WebHost.ConfigureKestrel(options =>
         };
     });
 });
-builder.Services.AddGrpc();
 builder.Services.AddDbContextPool<InventoryContext>(options =>
 {
     options.UseNpgsql(

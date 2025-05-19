@@ -9,7 +9,7 @@ using APIGateway.Dtos.RentalService.SUser;
 
 namespace APIGateway.Controllers.Users;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 [Consumes("application/json")]
 [Authorize(Roles = "user")]

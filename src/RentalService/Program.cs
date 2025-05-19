@@ -5,6 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 
 using Microsoft.EntityFrameworkCore;
 
+using Qdrant.Client;
+using Qdrant.Client.Grpc;
+
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Logs;
@@ -71,17 +74,18 @@ builder.Services.AddDbContextPool<RentalContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Rental"));
 });
-var certificate = X509CertificateLoader.LoadPkcs12FromFile("Rental.pfx", builder.Configuration["Kestrel:Endpoints:Rental:Certificate:Password"]);
-var caCert = X509CertificateLoader.LoadCertificateFromFile("BookRentalCA.crt");
-builder.Services.AddGrpcClient<SInventorySystem.SInventorySystemClient>(o =>
-{
-    o.Address = new Uri("https://localhost:5502");
-    o.ChannelOptionsActions.Add(channelOptions =>
+builder.Services
+    .AddGrpcClient<SInventorySystem.SInventorySystemClient>(o =>
+    {
+        o.Address = new Uri("https://localhost:5502");
+    })
+    .ConfigurePrimaryHttpMessageHandler(() =>
     {
         var handler = new HttpClientHandler();
-        handler.ClientCertificates.Add(certificate);
+        handler.ClientCertificates.Add(X509CertificateLoader.LoadPkcs12FromFile("Rental.pfx", builder.Configuration["Kestrel:Endpoints:Rental:Certificate:Password"]));
         handler.ServerCertificateCustomValidationCallback = (_, cert, _, _) =>
         {
+            var caCert = X509CertificateLoader.LoadCertificateFromFile("BookRentalCA.crt");
             if (cert == null)
                 return false;
             var customChain = new X509Chain();
@@ -92,9 +96,34 @@ builder.Services.AddGrpcClient<SInventorySystem.SInventorySystemClient>(o =>
                 return false;
             return customChain.ChainElements.Any(c => c.Certificate.Equals(caCert));
         };
-        channelOptions.HttpHandler = handler;
+        return handler;
     });
-});
+builder.Services
+    .AddGrpcClient<QdrantGrpcClient>(o =>
+    {
+        o.Address = new Uri("https://localhost:6334");
+    })
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        var handler = new HttpClientHandler();
+        handler.ClientCertificates.Add(X509CertificateLoader.LoadPkcs12FromFile("Rental.pfx", builder.Configuration["Kestrel:Endpoints:Rental:Certificate:Password"]));
+        handler.ServerCertificateCustomValidationCallback = (_, cert, _, _) =>
+        {
+            var caCert = X509CertificateLoader.LoadCertificateFromFile("BookRentalCA.crt");
+            if (cert == null)
+                return false;
+            var customChain = new X509Chain();
+            customChain.ChainPolicy.ExtraStore.Add(caCert);
+            customChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+            customChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            if (!customChain.Build(cert))
+                return false;
+            return customChain.ChainElements.Any(c => c.Certificate.Equals(caCert));
+        };
+        return handler;
+    });
+// AddGrpcClient<QdrantGrpcClient> creates transient clients, so we need to add QdrantClient as transient as well
+builder.Services.AddTransient<QdrantClient>();
 builder.Services.AddGrpc(options =>
 {
     options.Interceptors.Add<ExceptionInterceptor>();

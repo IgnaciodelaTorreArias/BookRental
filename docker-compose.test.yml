@@ -7,7 +7,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=${INVENTORY_POSTGRES_PASSWORD}
     networks:
-      - BookRental
+      - Inventory
 
   RentalDB:
     image: postgres
@@ -17,7 +17,21 @@ services:
     environment:
       - POSTGRES_PASSWORD=${RENTAL_POSTGRES_PASSWORD}
     networks:
-      - BookRental
+      - Rental
+
+  Embeddings:
+    image: qdrant:latest
+    container_name: Embeddings
+    build: infrastructure/databases/embeddings
+    ports:
+      - 6333:6333
+      - 6334:6334
+    expose:
+      - 6333
+      - 6334
+      - 6335
+    networks:
+      - Embeddings
 
   LGTM:
     image: grafana/otel-lgtm:latest
@@ -27,7 +41,7 @@ services:
       - 4317:4317
       - 4318:4318
     networks:
-      - BookRental
+      - LGTM
 
   Kafka:
     image: confluentinc/confluent-local:7.6.0
@@ -58,27 +72,36 @@ services:
       - KAFKA_ZOOKEEPER_CONNECT=
       - CLUSTER_ID=
     networks:
-      - BookRental
+      - Kafka
 
   init-InventoryDB:
     image: init-inventorydb:latest
-    build: infrastructure/database/Inventory
+    build: infrastructure/databases/inventory
     depends_on:
       - InventoryDB
     environment:
       - PGPASSWORD=${INVENTORY_POSTGRES_PASSWORD}
     networks:
-      - BookRental
+      - Inventory
 
   init-RentalDB:
     image: init-rentaldb:latest
-    build: infrastructure/database/Rental
+    build: infrastructure/databases/rental
     depends_on:
       - RentalDB
     environment:
       - PGPASSWORD=${RENTAL_POSTGRES_PASSWORD}
     networks:
-      - BookRental
+      - Rental
+
+  init-Embeddings:
+    image: init-embeddings:latest
+    container_name: init-embeddings
+    build: infrastructure/databases/embeddings/init
+    depends_on:
+      - Embeddings
+    networks:
+      - Embeddings
 
   init-Kafka:
     image: confluentinc/confluent-local:7.6.0
@@ -97,12 +120,42 @@ services:
       kafka-topics --bootstrap-server Kafka:9092 --create --if-not-exists --topic confirmed_rental --replication-factor 1 --partitions 1;
       "
     networks:
-      - BookRental
+      - Kafka
 
 networks:
-  BookRental:
+  Inventory:
     driver: bridge
     ipam:
       config:
-        - subnet: 10.0.15.0/24
-          gateway: 10.0.15.1
+        - subnet: 10.0.100.0/24
+          gateway: 10.0.100.1
+  Rental:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.101.0/24
+          gateway: 10.0.101.1
+  Embeddings:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.102.0/24
+          gateway: 10.0.102.1
+  Kafka:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.110.0/24
+          gateway: 10.0.110.1
+  LGTM:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.120.0/24
+          gateway: 10.0.120.1
+  APIGateway:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.115.0/24
+          gateway: 10.0.115.1

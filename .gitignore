@@ -1,3 +1,4 @@
+*.onnx
 # Created by https://www.toptal.com/developers/gitignore/api/python,csharp,certificates
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,csharp,certificates
 

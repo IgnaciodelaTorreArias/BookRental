@@ -42,6 +42,22 @@ public class BooksController(
         return new(response);
     }
 
+    [HttpGet("recomendations/{id}")]
+    [AllowAnonymous]
+    public async Task<IEnumerable<DtoBookGET>> GetSimilar([Range(1, uint.MaxValue)] uint id)
+    {
+        Books response = await _clientI.GetSimilarBooksAsync(new() { Identifier = id });
+        return response.BooksData.Select(book => new DtoBookGET(book));
+    }
+
+    [HttpGet("recomendations")]
+    [Authorize(Roles = "user")]
+    public async Task<IEnumerable<DtoBookGET>> Get()
+    {
+        Books response = await _clientI.GetRecommendedBooksAsync(new(), Headers);
+        return response.BooksData.Select(book => new DtoBookGET(book));
+    }
+
     [HttpPost("{id}")]
     [Authorize(Roles = "user")]
     public async Task<RentalStatus> Post([Range(1, uint.MaxValue)] uint id)

@@ -15,7 +15,7 @@ enum BookOperation{
 // 3. book_returned
 message KafkaBook {
 	uint32 identifier = 1;
-	optional string description = 2;
+	reserved 2; // description. Deprecated because it was meant to be used by "RecommendationService" which no longer will exist
 	optional uint32 rental_fee = 3;
 	optional bool visible = 4;
 	optional BookOperation operation = 5;
